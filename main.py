@@ -20,7 +20,6 @@ async def on_ready():
 
 @bot.command(name="r")
 async def remind(ctx, date: str, time: str, *, thing: str):
-    print(f"目前時間 (now): {now}")
     try:
         remind_time = datetime.datetime.strptime(f"{date} {time}", "%Y%m%d %H%M")
         now = datetime.datetime.now()
@@ -78,11 +77,9 @@ async def cancel_reminder(ctx, index: int = None):
 @tasks.loop(seconds=30)
 async def check_reminders():
     now = datetime.datetime.now()
-    print(f"目前時間 (now): {now}")
     for guild_id in list(reminder_data.keys()):
         reminders = reminder_data[guild_id]
         for reminder in reminders[:]:
-            print(f"提醒時間: {reminder['time']}")
             if now >= reminder["time"]:
                 channel = bot.get_channel(reminder["channel_id"])
                 if channel:
