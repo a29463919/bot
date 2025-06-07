@@ -2,8 +2,7 @@ import os
 import discord
 from discord.ext import commands, tasks
 import datetime
-import os
-from keep_alive import keep_alive
+from keep_alive import keep_alive  # 確保有這個檔案
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
@@ -14,20 +13,16 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 reminder_data = {}
 
-
 @bot.event
 async def on_ready():
     print(f"✅ 登入為 {bot.user}")
     check_reminders.start()
 
-
 @bot.command(name="r")
 async def remind(ctx, date: str, time: str, *, thing: str):
     try:
-        remind_time = datetime.datetime.strptime(f"{date} {time}",
-                                                 "%Y%m%d %H%M")
+        remind_time = datetime.datetime.strptime(f"{date} {time}", "%Y%m%d %H%M")
         now = datetime.datetime.now()
-
         if remind_time < now:
             await ctx.send("❗提醒時間已經過了")
             return
@@ -43,13 +38,10 @@ async def remind(ctx, date: str, time: str, *, thing: str):
             "thing": thing
         })
 
-        await ctx.send(
-            f"✅ 已設定提醒：{remind_time.strftime('%Y-%m-%d %H:%M')} 「{thing}」")
+        await ctx.send(f"✅ 已設定提醒：{remind_time.strftime('%Y-%m-%d %H:%M')} 「{thing}」")
 
     except ValueError:
-        await ctx.send(
-            "❗格式錯誤，請輸入：!r YYYYMMDD HHMM 事情（例如 `!r 20250608 1400 吃便當`）")
-
+        await ctx.send("❗格式錯誤，請輸入：!r YYYYMMDD HHMM 事情（例如 `!r 20250608 1400 吃便當`）")
 
 @bot.command(name="cancel")
 async def cancel_reminder(ctx, index: int = None):
@@ -60,8 +52,7 @@ async def cancel_reminder(ctx, index: int = None):
         await ctx.send("⚠️ 沒有任何提醒。")
         return
 
-    user_reminders = [(i, r) for i, r in enumerate(reminder_data[guild_id])
-                      if r["user_id"] == user_id]
+    user_reminders = [(i, r) for i, r in enumerate(reminder_data[guild_id]) if r["user_id"] == user_id]
 
     if not user_reminders:
         await ctx.send("⚠️ 你沒有提醒。")
@@ -83,7 +74,6 @@ async def cancel_reminder(ctx, index: int = None):
     removed = reminder_data[guild_id].pop(real_index)
     await ctx.send(f"🗑️ 已刪除提醒：「{removed['thing']}」")
 
-
 @tasks.loop(seconds=30)
 async def check_reminders():
     now = datetime.datetime.now()
@@ -94,10 +84,8 @@ async def check_reminders():
                 channel = bot.get_channel(reminder["channel_id"])
                 if channel:
                     user_mention = f"<@{reminder['user_id']}>"
-                    await channel.send(
-                        f"{user_mention} 🔔 提醒你：{reminder['thing']}（時間已到）")
+                    await channel.send(f"{user_mention} 🔔 提醒你：{reminder['thing']}（時間已到）")
                 reminders.remove(reminder)
 
-
 keep_alive()
-bot.run(os.getenv("DISCORD_TOKEN"))
+bot.run(TOKEN)
