@@ -2,7 +2,11 @@ import os
 import discord
 from discord.ext import commands, tasks
 import datetime
-from keep_alive import keep_alive  # 確保有這個檔案
+from keep_alive import keep_alive
+from datetime import timezone, timedelta
+
+# 台灣時區 UTC+8
+tz = timezone(timedelta(hours=8))
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
@@ -16,14 +20,15 @@ reminder_data = {}
 @bot.event
 async def on_ready():
     print(f"✅ 登入為 {bot.user}")
-    print("現在時間（伺服器時間）：", datetime.datetime.now())
     check_reminders.start()
 
 @bot.command(name="r")
 async def remind(ctx, date: str, time: str, *, thing: str):
     try:
         remind_time = datetime.datetime.strptime(f"{date} {time}", "%Y%m%d %H%M")
-        now = datetime.datetime.now()
+        remind_time = remind_time.replace(tzinfo=tz)  # 加上時區
+        now = datetime.datetime.now(tz)
+
         if remind_time < now:
             await ctx.send("❗提醒時間已經過了")
             return
@@ -77,7 +82,7 @@ async def cancel_reminder(ctx, index: int = None):
 
 @tasks.loop(seconds=30)
 async def check_reminders():
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(tz)
     for guild_id in list(reminder_data.keys()):
         reminders = reminder_data[guild_id]
         for reminder in reminders[:]:
