@@ -4,9 +4,7 @@ from discord.ext import commands, tasks
 import datetime
 import os
 from keep_alive import keep_alive
-from dotenv import load_dotenv
 
-load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 intents = discord.Intents.default()
