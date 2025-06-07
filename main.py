@@ -101,4 +101,4 @@ async def check_reminders():
 
 
 keep_alive()
-bot.run(TOKEN)
+bot.run(os.getenv("DISCORD_TOKEN"))
