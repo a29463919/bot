@@ -39,6 +39,7 @@ async def remind(ctx, date: str, time: str, *, thing: str):
         })
 
         await ctx.send(f"✅ 已設定提醒：{remind_time.strftime('%Y-%m-%d %H:%M')} 「{thing}」")
+              print("現在時間：", datetime.datetime.now())
 
     except ValueError:
         await ctx.send("❗格式錯誤，請輸入：!r YYYYMMDD HHMM 事情（例如 `!r 20250608 1400 吃便當`）")
