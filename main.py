@@ -20,6 +20,7 @@ async def on_ready():
 
 @bot.command(name="r")
 async def remind(ctx, date: str, time: str, *, thing: str):
+    print(f"目前時間 (now): {now}")
     try:
         remind_time = datetime.datetime.strptime(f"{date} {time}", "%Y%m%d %H%M")
         now = datetime.datetime.now()
